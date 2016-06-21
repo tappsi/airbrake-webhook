@@ -1,7 +1,9 @@
 package webhook
 
-import jlexer  "github.com/mailru/easyjson/jlexer"
-import jwriter "github.com/mailru/easyjson/jwriter"
+import (
+	"github.com/mailru/easyjson/jlexer"
+	"github.com/mailru/easyjson/jwriter"
+)
 
 func (v Notification) MarshalEasyJSON(w *jwriter.Writer) {
 	easyjson_encode(w, v)
