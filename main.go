@@ -7,6 +7,6 @@ import (
 
 func main() {
 	api := iris.New()
-	api.Post("/airbrake", webhook.Process)
+	api.Post("/airbrake-webhook", webhook.Process)
 	api.Listen(":8080")
 }
