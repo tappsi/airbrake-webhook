@@ -49,7 +49,7 @@ func Process(ctx *iris.Context) {
 	if writer.Error == nil {
 		buf := new(bytes.Buffer)
 		writer.DumpTo(buf)
-		ctx.Data(iris.StatusOK, buf.Bytes())
+		SendMessage(buf.Bytes())
 	}
 
 }
