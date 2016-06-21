@@ -30,6 +30,11 @@ func SendMessage(body []byte) bool {
 	)
 	failOnError(err, "Failed to declare a exchange")
 
+	err = ch.Confirm(false)
+	failOnError(err, "Channel could not be put into confirm mode")
+	confirms := ch.NotifyPublish(make(chan amqp.Confirmation, 1))
+	defer confirmOne(confirms)
+
 	err = ch.Publish(
 		exchange, // publish to an exchange
 		"",       // routing key
@@ -54,5 +59,11 @@ func failOnError(err error, msg string) {
 	if err != nil {
 		log.Fatalf("%s: %s", msg, err)
 		panic(fmt.Sprintf("%s: %s", msg, err))
+	}
+}
+
+func confirmOne(confirms <-chan amqp.Confirmation) {
+	if confirmed := <-confirms; !confirmed.Ack {
+		log.Fatalf("Failed delivery of delivery tag: %d", confirmed.DeliveryTag)
 	}
 }
