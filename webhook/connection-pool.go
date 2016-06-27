@@ -30,7 +30,7 @@ func (p *RMQConnectionPool) ReturnConnection(conn interface{}) error {
 	return p.pool.ReturnObject(conn)
 }
 
-func (p *RMQConnectionPool) ClosePool() {
+func (p *RMQConnectionPool) Close() {
 	p.pool.Close()
 }
 

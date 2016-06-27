@@ -10,33 +10,31 @@ import (
 	"github.com/tappsi/airbrake-webhook/webhook"
 )
 
-var connPool webhook.RMQConnectionPool
-
 func main() {
 
+	port := "8080"
+	endpoint := "airbrake-webhook"
+	exchange := "notifications_prod"
+	uri := "amqp://test:test@192.168.1.13:5672"
+
+	queue := webhook.NewMessagingQueue(uri, exchange)
+	hook  := webhook.NewWebHook(queue)
+
 	api := iris.New()
-	api.Post("/airbrake-webhook", webhook.Process)
-
-	uri  := "amqp://test:test@192.168.1.13:5672"
-	connPool = webhook.NewRMQConnectionPool(uri)
-
-	conn, toReturn, _ := connPool.GetConnection()
-	conn.Close()
-	_ := connPool.ReturnConnection(toReturn)
-
-	go cleanup()
-	api.Listen(":8080")
+	api.Post("/" + endpoint, hook.Process)
+	go cleanup(queue)
+	api.Listen(":" + port)
 
 }
 
-func cleanup() {
+func cleanup(queue webhook.MessagingQueue) {
 
 	sigChan := make(chan os.Signal)
 	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGKILL, syscall.SIGTERM, syscall.SIGTSTP)
 	<-sigChan
 
 	fmt.Println("\nReceived an interrupt, stopping services...\n")
-	connPool.ClosePool()
+	queue.Close()
 
 	runtime.GC()
 	os.Exit(0)

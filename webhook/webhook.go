@@ -16,7 +16,15 @@ type Notification struct {
 	message    string
 }
 
-func Process(ctx *iris.Context) {
+type WebHook struct {
+	queue *MessagingQueue
+}
+
+func NewWebHook(queue MessagingQueue) WebHook {
+	return WebHook{ queue: &queue }
+}
+
+func (w *WebHook) Process(ctx *iris.Context) {
 
 	input := ctx.GetRequestCtx().Request.Body()
 
@@ -49,7 +57,7 @@ func Process(ctx *iris.Context) {
 	if writer.Error == nil {
 		buf := new(bytes.Buffer)
 		writer.DumpTo(buf)
-		SendMessage(buf.Bytes())
+		w.queue.SendMessage(buf.Bytes())
 	}
 
 }

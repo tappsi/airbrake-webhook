@@ -6,27 +6,32 @@ import (
 	"github.com/streadway/amqp"
 )
 
-func SendMessage(body []byte) bool {
+type MessagingQueue struct {
+	pool *RMQConnectionPool
+	exchange string
+}
 
-	uri := "amqp://test:test@192.168.1.13:5672"
-	exchange := "notifications_test"
+func NewMessagingQueue(uri, exchange string) MessagingQueue {
+	pool := NewRMQConnectionPool(uri)
+	return MessagingQueue{ pool: &pool, exchange: exchange }
+}
 
-	conn, err := amqp.Dial(uri)
+func (m *MessagingQueue) SendMessage(body []byte) bool {
+
+	conn, obj, err := m.pool.GetConnection()
 	failOnError(err, "Failed to connect to RabbitMQ")
-	defer conn.Close()
-
 	ch, err := conn.Channel()
 	failOnError(err, "Failed to open a channel")
-	defer ch.Close()
+	defer m.freeResources(obj, ch)
 
 	err = ch.ExchangeDeclare(
-		exchange, // name
-		"direct", // type
-		true,     // durable
-		false,    // auto-deleted
-		false,    // internal
-		false,    // noWait
-		nil,      // arguments
+		m.exchange, // name
+		"direct",   // type
+		true,       // durable
+		false,      // auto-deleted
+		false,      // internal
+		false,      // noWait
+		nil,        // arguments
 	)
 	failOnError(err, "Failed to declare a exchange")
 
@@ -36,10 +41,10 @@ func SendMessage(body []byte) bool {
 	defer confirmOne(confirms)
 
 	err = ch.Publish(
-		exchange, // publish to an exchange
-		"",       // routing key
-		false,    // mandatory
-		false,    // immediate
+		m.exchange, // publish to an exchange
+		"",         // routing key
+		false,      // mandatory
+		false,      // immediate
 		amqp.Publishing{
 			Headers:         amqp.Table{},
 			ContentType:     "application/json",
@@ -53,6 +58,17 @@ func SendMessage(body []byte) bool {
 
 	return true
 
+}
+
+func (m *MessagingQueue) Close() {
+	m.pool.Close()
+}
+
+func (m *MessagingQueue) freeResources(toReturn interface{}, ch *amqp.Channel) {
+	e1 := ch.Close()
+	failOnError(e1, "Error closing channel")
+	e2 := m.pool.ReturnConnection(toReturn)
+	failOnError(e2, "Error returning connection to pool")
 }
 
 func failOnError(err error, msg string) {
