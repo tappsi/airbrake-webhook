@@ -11,12 +11,12 @@ type RMQConnectionPool struct {
 	pool *pool.ObjectPool
 }
 
-func NewRMQConnectionPool(uri string) RMQConnectionPool {
+func NewRMQConnectionPool(uri string, cfg PoolConfiguration) RMQConnectionPool {
 	pool := pool.NewObjectPoolWithDefaultConfig(&RMQConnectionFactory{uri: uri})
 	pool.Config.Lifo     = false
-	pool.Config.MaxTotal = 10
-	pool.Config.MinIdle  = 0
-	pool.Config.MaxIdle  = 10
+	pool.Config.MaxTotal = cfg.MaxTotal
+	pool.Config.MinIdle  = cfg.MinIdle
+	pool.Config.MaxIdle  = cfg.MaxIdle
 	return RMQConnectionPool{ pool: pool }
 }
 

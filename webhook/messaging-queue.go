@@ -1,7 +1,6 @@
 package webhook
 
 import (
-	"fmt"
 	"log"
 	"github.com/streadway/amqp"
 )
@@ -11,17 +10,17 @@ type MessagingQueue struct {
 	exchange string
 }
 
-func NewMessagingQueue(uri, exchange string) MessagingQueue {
-	pool := NewRMQConnectionPool(uri)
+func NewMessagingQueue(uri, exchange string, cfg PoolConfiguration) MessagingQueue {
+	pool := NewRMQConnectionPool(uri, cfg)
 	return MessagingQueue{ pool: &pool, exchange: exchange }
 }
 
 func (m *MessagingQueue) SendMessage(body []byte) bool {
 
 	conn, obj, err := m.pool.GetConnection()
-	failOnError(err, "Failed to connect to RabbitMQ")
+	FailOnError(err, "Failed to connect to RabbitMQ")
 	ch, err := conn.Channel()
-	failOnError(err, "Failed to open a channel")
+	FailOnError(err, "Failed to open a channel")
 	defer m.freeResources(obj, ch)
 
 	err = ch.ExchangeDeclare(
@@ -33,10 +32,10 @@ func (m *MessagingQueue) SendMessage(body []byte) bool {
 		false,      // noWait
 		nil,        // arguments
 	)
-	failOnError(err, "Failed to declare a exchange")
+	FailOnError(err, "Failed to declare a exchange")
 
 	err = ch.Confirm(false)
-	failOnError(err, "Channel could not be put into confirm mode")
+	FailOnError(err, "Channel could not be put into confirm mode")
 	confirms := ch.NotifyPublish(make(chan amqp.Confirmation, 1))
 	defer confirmOne(confirms)
 
@@ -54,7 +53,7 @@ func (m *MessagingQueue) SendMessage(body []byte) bool {
 			Priority:        0,              // 0-9
 		},
 	)
-	failOnError(err, "Failed to publish message")
+	FailOnError(err, "Failed to publish message")
 
 	return true
 
@@ -66,16 +65,9 @@ func (m *MessagingQueue) Close() {
 
 func (m *MessagingQueue) freeResources(toReturn interface{}, ch *amqp.Channel) {
 	e1 := ch.Close()
-	failOnError(e1, "Error closing channel")
+	FailOnError(e1, "Error closing channel")
 	e2 := m.pool.ReturnConnection(toReturn)
-	failOnError(e2, "Error returning connection to pool")
-}
-
-func failOnError(err error, msg string) {
-	if err != nil {
-		log.Fatalf("%s: %s", msg, err)
-		panic(fmt.Sprintf("%s: %s", msg, err))
-	}
+	FailOnError(e2, "Error returning connection to pool")
 }
 
 func confirmOne(confirms <-chan amqp.Confirmation) {
