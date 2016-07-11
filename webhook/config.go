@@ -8,17 +8,22 @@ import (
 )
 
 type Configuration struct {
-	WebServerPort uint16            `json:"webserver-port"`
-	EndpointName  string            `json:"endpoint-name"`
-	ExchangeName  string            `json:"exchange-name"`
-	QueueURI      string            `json:"queue-uri"`
-	PoolConfig    PoolConfiguration `json:"pool-config"`
+	WebServerPort uint16              `json:"webserver-port"`
+	EndpointName  string              `json:"endpoint-name"`
+	ExchangeName  string              `json:"exchange-name"`
+	QueueURI      string              `json:"queue-uri"`
+	PoolConfig    PoolConfiguration   `json:"pool-config"`
+	SecureConfig  SecureConfiguration
 }
 
 type PoolConfiguration struct {
 	MaxTotal int `json:"max-total"`
 	MinIdle  int `json:"min-idle"`
 	MaxIdle  int `json:"max-idle"`
+}
+
+type SecureConfiguration struct {
+	IsDevelopment bool `json:"is-development"`
 }
 
 func LoadConfiguration(path string) Configuration {
