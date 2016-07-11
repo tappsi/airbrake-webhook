@@ -1,0 +1,14 @@
+{
+  "webserver-port": 8181,
+  "endpoint-name": "airbrake-webhook",
+  "exchange-name": "notifications_dev",
+  "queue-uri": "amqp://test:test@192.168.1.13:5672",
+  "pool-config": {
+    "max-total": 10,
+    "min-idle":   0,
+    "max-idle":  10
+  },
+  "secure-config": {
+    "is-development": false
+  }
+}
