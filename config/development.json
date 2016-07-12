@@ -7,8 +7,5 @@
     "max-total": 10,
     "min-idle":   0,
     "max-idle":  10
-  },
-  "secure-config": {
-    "is-development": false
   }
 }
