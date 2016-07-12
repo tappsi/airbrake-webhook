@@ -23,6 +23,10 @@ _testmain.go
 *.test
 *.prof
 
+# Project-specific stuff:
+
+config/production.json
+
 # User-specific stuff:
 .idea/workspace.xml
 .idea/tasks.xml
