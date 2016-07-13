@@ -7,6 +7,7 @@ import (
 	"syscall"
 	"os/signal"
 	"github.com/kataras/iris"
+	"github.com/kataras/iris/config"
 	"github.com/tappsi/airbrake-webhook/webhook"
 )
 
@@ -18,7 +19,9 @@ func main() {
 
 	iris.Post("/" + cfg.EndpointName, hook.Process)
 	go cleanup(queue)
-	iris.Listen(fmt.Sprintf(":%d", cfg.WebServerPort))
+
+	err := iris.ListenTo(config.Server{ListeningAddr: fmt.Sprintf(":%d", cfg.WebServerPort)})
+	webhook.FailOnError(err, "Error listening on web server")
 
 }
 
@@ -30,6 +33,7 @@ func cleanup(queue webhook.MessagingQueue) {
 
 	fmt.Println("\nReceived an interrupt, stopping services...\n")
 	queue.Close()
+	iris.Close()
 
 	runtime.GC()
 	os.Exit(0)
