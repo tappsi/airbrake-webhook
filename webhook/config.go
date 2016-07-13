@@ -2,7 +2,6 @@ package webhook
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"os"
 	"strings"
 )
@@ -23,12 +22,12 @@ type PoolConfiguration struct {
 
 func LoadConfiguration(path string) Configuration {
 
-	file := getFile(path)
-	raw, err := ioutil.ReadFile(file)
+	fileName := getFile(path)
+	file, err := os.Open(fileName)
 	FailOnError(err, "Can not load configuration")
 
 	var cfg Configuration
-	err = json.Unmarshal(raw, &cfg)
+	err = json.NewDecoder(file).Decode(&cfg)
 	FailOnError(err, "Can not parse configuration")
 
 	return cfg
