@@ -3,8 +3,8 @@ package webhook
 import (
 	"bytes"
 	"github.com/buger/jsonparser"
-	"github.com/kataras/iris"
 	"github.com/mailru/easyjson/jwriter"
+	"net/http"
 	"strconv"
 	"strings"
 )
@@ -33,9 +33,11 @@ func NewWebHook(queue MessagingQueue) WebHook {
 // Process is the method that receives a request with a notification from Airbrake,
 // extracts the relevant information from the JSON, creates a new Notification
 // JSON and sends it to the messaging queue.
-func (w *WebHook) Process(ctx *iris.Context) {
+func (w *WebHook) Process(wt http.ResponseWriter, rq *http.Request) {
 
-	input := ctx.Request.Body()
+	buf := new(bytes.Buffer)
+	buf.ReadFrom(rq.Body)
+	input := buf.Bytes()
 
 	// parse input
 
