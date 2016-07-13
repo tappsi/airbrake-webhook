@@ -1,23 +1,23 @@
 package main
 
 import (
-	"os"
 	"fmt"
-	"runtime"
-	"syscall"
-	"os/signal"
 	"github.com/kataras/iris"
 	"github.com/kataras/iris/config"
 	"github.com/tappsi/airbrake-webhook/webhook"
+	"os"
+	"os/signal"
+	"runtime"
+	"syscall"
 )
 
 func main() {
 
-	cfg    := webhook.LoadConfiguration("./config/")
-	queue  := webhook.NewMessagingQueue(cfg.QueueURI, cfg.ExchangeName, cfg.PoolConfig)
-	hook   := webhook.NewWebHook(queue)
+	cfg := webhook.LoadConfiguration("./config/")
+	queue := webhook.NewMessagingQueue(cfg.QueueURI, cfg.ExchangeName, cfg.PoolConfig)
+	hook := webhook.NewWebHook(queue)
 
-	iris.Post("/" + cfg.EndpointName, hook.Process)
+	iris.Post("/"+cfg.EndpointName, hook.Process)
 	go cleanup(queue)
 
 	err := iris.ListenTo(config.Server{ListeningAddr: fmt.Sprintf(":%d", cfg.WebServerPort)})

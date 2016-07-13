@@ -1,18 +1,18 @@
 package webhook
 
 import (
+	"encoding/json"
+	"io/ioutil"
 	"os"
 	"strings"
-	"io/ioutil"
-	"encoding/json"
 )
 
 type Configuration struct {
-	WebServerPort uint16              `json:"webserver-port"`
-	EndpointName  string              `json:"endpoint-name"`
-	ExchangeName  string              `json:"exchange-name"`
-	QueueURI      string              `json:"queue-uri"`
-	PoolConfig    PoolConfiguration   `json:"pool-config"`
+	WebServerPort uint16            `json:"webserver-port"`
+	EndpointName  string            `json:"endpoint-name"`
+	ExchangeName  string            `json:"exchange-name"`
+	QueueURI      string            `json:"queue-uri"`
+	PoolConfig    PoolConfiguration `json:"pool-config"`
 }
 
 type PoolConfiguration struct {

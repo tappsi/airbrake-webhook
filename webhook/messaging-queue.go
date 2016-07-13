@@ -1,18 +1,18 @@
 package webhook
 
 import (
-	"log"
 	"github.com/streadway/amqp"
+	"log"
 )
 
 type MessagingQueue struct {
-	pool *RMQConnectionPool
+	pool     *RMQConnectionPool
 	exchange string
 }
 
 func NewMessagingQueue(uri, exchange string, cfg PoolConfiguration) MessagingQueue {
 	pool := NewRMQConnectionPool(uri, cfg)
-	return MessagingQueue{ pool: &pool, exchange: exchange }
+	return MessagingQueue{pool: &pool, exchange: exchange}
 }
 
 func (m *MessagingQueue) SendMessage(body []byte) bool {

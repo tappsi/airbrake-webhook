@@ -2,11 +2,11 @@ package webhook
 
 import (
 	"bytes"
+	"github.com/buger/jsonparser"
+	"github.com/kataras/iris"
+	"github.com/mailru/easyjson/jwriter"
 	"strconv"
 	"strings"
-	"github.com/kataras/iris"
-	"github.com/buger/jsonparser"
-	"github.com/mailru/easyjson/jwriter"
 )
 
 // easyjson:json
@@ -21,12 +21,12 @@ type WebHook struct {
 }
 
 func NewWebHook(queue MessagingQueue) WebHook {
-	return WebHook{ queue: &queue }
+	return WebHook{queue: &queue}
 }
 
 func (w *WebHook) Process(ctx *iris.Context) {
 
-	input := ctx.GetRequestCtx().Request.Body()
+	input := ctx.Request.Body()
 
 	// parse input
 

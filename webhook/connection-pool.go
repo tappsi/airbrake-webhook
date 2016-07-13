@@ -1,8 +1,8 @@
 package webhook
 
 import (
-	"github.com/streadway/amqp"
 	pool "github.com/jolestar/go-commons-pool"
+	"github.com/streadway/amqp"
 )
 
 // connection pool
@@ -13,11 +13,11 @@ type RMQConnectionPool struct {
 
 func NewRMQConnectionPool(uri string, cfg PoolConfiguration) RMQConnectionPool {
 	pool := pool.NewObjectPoolWithDefaultConfig(&RMQConnectionFactory{uri: uri})
-	pool.Config.Lifo     = false
+	pool.Config.Lifo = false
 	pool.Config.MaxTotal = cfg.MaxTotal
-	pool.Config.MinIdle  = cfg.MinIdle
-	pool.Config.MaxIdle  = cfg.MaxIdle
-	return RMQConnectionPool{ pool: pool }
+	pool.Config.MinIdle = cfg.MinIdle
+	pool.Config.MaxIdle = cfg.MaxIdle
+	return RMQConnectionPool{pool: pool}
 }
 
 func (p *RMQConnectionPool) GetConnection() (*amqp.Connection, interface{}, error) {
