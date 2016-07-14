@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"github.com/kataras/iris"
-	"github.com/kataras/iris/config"
 	"github.com/tappsi/airbrake-webhook/webhook"
 	"os"
 	"os/signal"
@@ -20,7 +19,7 @@ func main() {
 	iris.Post("/"+cfg.EndpointName, hook.Process)
 	go cleanup(queue)
 
-	err := iris.ListenTo(config.Server{ListeningAddr: fmt.Sprintf(":%d", cfg.WebServerPort)})
+	err := iris.ListenWithErr(fmt.Sprintf(":%d", cfg.WebServerPort))
 	webhook.FailOnError(err, "Error listening on web server")
 
 }
