@@ -32,7 +32,7 @@ func (w *WebHook) Process(ctx *iris.Context) {
 
 	environment, _, _, _ := jsonparser.Get(input, "error", "environment")
 	timesOccurred, _ := jsonparser.GetInt(input, "error", "times_occurred")
-	errorId, _ := jsonparser.GetInt(input, "error", "last_notice", "id")
+	errorId, _ := jsonparser.GetInt(input, "error", "id")
 	errorUrl, _, _, _ := jsonparser.Get(input, "airbrake_error_url")
 	errorMessage, _, _, _ := jsonparser.Get(input, "error", "error_message")
 
@@ -45,7 +45,7 @@ func (w *WebHook) Process(ctx *iris.Context) {
 			"Environment: " + string(environment),
 			"Occurrences: " + strconv.FormatInt(timesOccurred, 10),
 			"Error ID: " + strconv.FormatInt(errorId, 10),
-			"Error URL: " + string(errorUrl),
+			"Error URL: " + strings.Replace(string(errorUrl), "\\", "", -1),
 			"Error Message: " + string(errorMessage),
 		},
 		", ")

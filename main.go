@@ -17,7 +17,7 @@ func main() {
 	queue := webhook.NewMessagingQueue(cfg.QueueURI, cfg.ExchangeName, cfg.PoolConfig)
 	hook := webhook.NewWebHook(queue)
 
-	iris.Post("/"+cfg.EndpointName, hook.Process)
+	iris.Post("/" + cfg.EndpointName, hook.Process)
 	go cleanup(queue)
 
 	err := iris.ListenTo(config.Server{ListeningAddr: fmt.Sprintf(":%d", cfg.WebServerPort)})
