@@ -2,6 +2,7 @@ package webhook
 
 import (
 	"bytes"
+	"fmt"
 	"github.com/buger/jsonparser"
 	"github.com/kataras/iris"
 	"github.com/mailru/easyjson/jwriter"
@@ -27,6 +28,7 @@ func NewWebHook(queue MessagingQueue) WebHook {
 func (w *WebHook) Process(ctx *iris.Context) {
 
 	input := ctx.Request.Body()
+	fmt.Println("\n\n" + string(input) + "\n\n") // TODO: just for debugging, remove later.
 
 	// parse input
 
@@ -46,7 +48,7 @@ func (w *WebHook) Process(ctx *iris.Context) {
 			"Occurrences: " + strconv.FormatInt(timesOccurred, 10),
 			"Error ID: " + strconv.FormatInt(errorId, 10),
 			"Error URL: " + strings.Replace(string(errorUrl), "\\", "", -1),
-			"Error Message: " + string(errorMessage),
+			"Error Message: " + strings.Replace(string(errorMessage), "\\", "", -1),
 		},
 		", ")
 
