@@ -2,7 +2,6 @@ package webhook
 
 import (
 	"bytes"
-	"fmt"
 	"github.com/buger/jsonparser"
 	"github.com/kataras/iris"
 	"github.com/mailru/easyjson/jwriter"
@@ -28,13 +27,12 @@ func NewWebHook(queue MessagingQueue) WebHook {
 func (w *WebHook) Process(ctx *iris.Context) {
 
 	input := ctx.Request.Body()
-	fmt.Println("\n\n" + string(input) + "\n\n") // TODO: just for debugging, remove later.
 
 	// parse input
 
 	environment, _, _, _ := jsonparser.Get(input, "error", "environment")
 	timesOccurred, _ := jsonparser.GetInt(input, "error", "times_occurred")
-	errorId, _ := jsonparser.GetInt(input, "error", "id")
+	errorId, _, _, _ := jsonparser.Get(input, "error", "id")
 	errorUrl, _, _, _ := jsonparser.Get(input, "airbrake_error_url")
 	errorMessage, _, _, _ := jsonparser.Get(input, "error", "error_message")
 
@@ -46,7 +44,7 @@ func (w *WebHook) Process(ctx *iris.Context) {
 		[]string{
 			"Environment: " + string(environment),
 			"Occurrences: " + strconv.FormatInt(timesOccurred, 10),
-			"Error ID: " + strconv.FormatInt(errorId, 10),
+			"Error ID: " + string(errorId),
 			"Error URL: " + strings.Replace(string(errorUrl), "\\", "", -1),
 			"Error Message: " + strings.Replace(string(errorMessage), "\\", "", -1),
 		},
