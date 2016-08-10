@@ -5,16 +5,27 @@ import (
 	"log"
 )
 
+// MessagingQueue is a structure used for defining a messaging
+// queue object, it's used for encapsulating the exchange
+// name and the connection pool used for connecting to RMQ.
 type MessagingQueue struct {
 	pool     *RMQConnectionPool
 	exchange string
 }
 
+// NewMessagingQueue creates a new MessagingQueue object given as parameters
+// the uri where it's located (including authentication credentials), the
+// name of the exchange and a PoolConfiguration struct with the pool's config.
 func NewMessagingQueue(uri, exchange string, cfg PoolConfiguration) MessagingQueue {
 	pool := NewRMQConnectionPool(uri, cfg)
 	return MessagingQueue{pool: &pool, exchange: exchange}
 }
 
+// SendMessage sends a message to RMQ. The message body is received as
+// parameter. Internally, this method obtains a connection from the pool,
+// marshals the message body into a suitable JSON and publishes it to
+// the specified RMQ exchange, with QoS considerations. In particular,
+// a confirmation channel is defined for receiving message acknowledges.
 func (m *MessagingQueue) SendMessage(body []byte) bool {
 
 	conn, obj, err := m.pool.GetConnection()
@@ -59,10 +70,13 @@ func (m *MessagingQueue) SendMessage(body []byte) bool {
 
 }
 
+// Close closes the queue's connections still open
 func (m *MessagingQueue) Close() {
 	m.pool.Close()
 }
 
+// freeResources is a deferred method for freeing resources after sending
+// a message to the queue, basically it returns a connection to the pool.
 func (m *MessagingQueue) freeResources(toReturn interface{}, ch *amqp.Channel) {
 	e1 := ch.Close()
 	FailOnError(e1, "Error closing channel")
@@ -70,6 +84,7 @@ func (m *MessagingQueue) freeResources(toReturn interface{}, ch *amqp.Channel) {
 	FailOnError(e2, "Error returning connection to pool")
 }
 
+// confirmOne is a deferred function for receiving message acknowledges from the queue.
 func confirmOne(confirms <-chan amqp.Confirmation) {
 	if confirmed := <-confirms; !confirmed.Ack {
 		log.Fatalf("Failed delivery of delivery tag: %d", confirmed.DeliveryTag)

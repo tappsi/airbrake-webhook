@@ -11,6 +11,9 @@ import (
 	"syscall"
 )
 
+// main obtains the configuration, starts the connection pool for the messaging queue,
+// registers a cleanup handler, starts the web server, registers a handler for the endpoint
+// and starts listening.
 func main() {
 
 	cfg := webhook.LoadConfiguration("./config/")
@@ -25,6 +28,9 @@ func main() {
 
 }
 
+// cleanup creates a channel for receiving system signals, when an interrupt is
+// received it stops the connection pool to the queue and stops the web server.
+// It receives as parameter a MessagingQueue.
 func cleanup(queue webhook.MessagingQueue) {
 
 	sigChan := make(chan os.Signal)

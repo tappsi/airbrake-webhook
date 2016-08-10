@@ -10,20 +10,29 @@ import (
 )
 
 // easyjson:json
+// Notification is the struct defined for sending messages to RMQ,
+// it's serialized using the easyjson library for efficiency purposes.
 type Notification struct {
 	service    string
 	recipients []string
 	message    string
 }
 
+// WebHook is a structure used for defining a web hook object,
+// it stores the messaging queue used for actually sending the messages.
 type WebHook struct {
 	queue *MessagingQueue
 }
 
+// NewWebHook creates a new web hook object,
+// it receives a MessagingQueue as parameter
 func NewWebHook(queue MessagingQueue) WebHook {
 	return WebHook{queue: &queue}
 }
 
+// Process is the method that receives a request with a notification from Airbrake,
+// extracts the relevant information from the JSON, creates a new Notification
+// JSON and sends it to the messaging queue.
 func (w *WebHook) Process(ctx *iris.Context) {
 
 	input := ctx.Request.Body()
