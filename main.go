@@ -28,20 +28,25 @@ func main() {
 
 }
 
+// newRouter creates a new http router for handling requests, receives as parameters
+// the endpoint name and the http handler.
 func newRouter(endpoint string, handler http.Handler) *mux.Router {
 
 	router := mux.NewRouter()
 
 	router.StrictSlash(true).
-		Methods("POST").
-		Path("/" + endpoint).
-		Name("AirbrakeWebhook").
-		Handler(handler)
+			Methods("POST").
+			Path("/" + endpoint).
+			Name("AirbrakeWebhook").
+			Handler(handler)
 
 	return router
 
 }
 
+// cleanup creates a channel for receiving system signals, when an interrupt is
+// received it stops the connection pool to the queue and stops the web server.
+// It receives as parameter a MessagingQueue.
 func cleanup(queue webhook.MessagingQueue) {
 
 	sigChan := make(chan os.Signal)
