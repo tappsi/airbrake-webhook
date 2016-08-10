@@ -35,10 +35,10 @@ func newRouter(endpoint string, handler http.Handler) *mux.Router {
 	router := mux.NewRouter()
 
 	router.StrictSlash(true).
-			Methods("POST").
-			Path("/" + endpoint).
-			Name("AirbrakeWebhook").
-			Handler(handler)
+		Methods("POST").
+		Path("/" + endpoint).
+		Name("AirbrakeWebhook").
+		Handler(handler)
 
 	return router
 
