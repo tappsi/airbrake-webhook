@@ -5,6 +5,7 @@ import (
 	"github.com/buger/jsonparser"
 	"github.com/kataras/iris"
 	"github.com/mailru/easyjson/jwriter"
+	"io/ioutil"
 	"strconv"
 	"strings"
 )
@@ -35,7 +36,7 @@ func NewWebHook(queue MessagingQueue) WebHook {
 // JSON and sends it to the messaging queue.
 func (w *WebHook) Process(ctx *iris.Context) {
 
-	input := ctx.Request.Body()
+	input, _ := ioutil.ReadAll(ctx.Request.Body)
 
 	// parse input
 
