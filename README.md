@@ -123,7 +123,7 @@ Each of the configuration options is detailed below:
 * `endpoint-name`: Path name of the exposed service.
 * `exchange-name`: Name of the exchange used to publish messages.
 * `queue-uri`: URL and credentials for RMQ.
-* `max-total`: Maximum number of total connections open.
+* `max-total`: Maximum number of total connections to be opened.
 * `min-idle`: Minimum number of idle connections allowed.
 * `max-idle`: Maximum number of idle connections allowed.
 
@@ -155,4 +155,4 @@ If you have any issues or questions regarding `airbrake-webhook`, feel free to c
 
 # License
 
-Unless otherwise noted, the `airbrake-webhook` source files are distributed under the MIT License found in the [LICENSE file](LICENSE).
+Unless otherwise noted, the `airbrake-webhook` source files are distributed under the MIT License found in the [LICENSE](LICENSE) file.
