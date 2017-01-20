@@ -60,6 +60,22 @@ Now it's up to you to decide how to handle the message. By default, this microse
 
 # Project Structure
 
+The project is structured as follows:
+
+- A `main.go` file in the `main` package
+- All the `.go` logic files reside inside the `webhook` package
+- Configuration files in `.json` format, residing in the `config` directory
+
+## Main Package
+
+
+
+## Webhook Package
+
+
+
+## Configuration
+
 
 
 # Dependencies
