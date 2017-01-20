@@ -62,7 +62,11 @@ Now it's up to you to decide how to handle the message. By default, this microse
 {
   "service": "mattermost",
   "recipients": ["opslog"],
-  "message": "Environment: production, Occurrences: 1, Error ID: 37463546, Error URL: https://airbrake.io/airbrake-error-url, Error Message: missing attribute"
+  "message": "Environment: production,
+              Occurrences: 1,
+              Error ID: 37463546,
+              Error URL: https://airbrake.io/airbrake-error-url,
+              Error Message: missing attribute"
 }
 ```
 
@@ -99,14 +103,14 @@ The webhook's configuration is handled via JSON files, located in the `config` d
 
 ```json
 {
-  "webserver-port": 8181,                            # port where the webserver runs
-  "endpoint-name": "airbrake-webhook",               # path name of the exposed service
-  "exchange-name": "notifications_dev",              # name of the exchange used to publish messages
-  "queue-uri": "amqp://test:test@192.168.1.13:5672", # URL and credentials for RMQ
-  "pool-config": {                                   # RMQ connection pool configuration
-    "max-total": 10,                                 # Maximum number of total connections open
-    "min-idle":   0,                                 # Minimum number of idle connections allowed
-    "max-idle":  10                                  # Maximum number of idle connections allowed
+  "webserver-port": 8181,                            // port where the webserver runs
+  "endpoint-name": "airbrake-webhook",               // path name of the exposed service
+  "exchange-name": "notifications_dev",              // name of the exchange used to publish messages
+  "queue-uri": "amqp://test:test@192.168.1.13:5672", // URL and credentials for RMQ
+  "pool-config": {                                   // RMQ connection pool configuration
+    "max-total": 10,                                 // Maximum number of total connections open
+    "min-idle":   0,                                 // Minimum number of idle connections allowed
+    "max-idle":  10                                  // Maximum number of idle connections allowed
   }
 }
 ```
@@ -117,7 +121,7 @@ Several high-performance, third party open source libraries and frameworks were 
 
 * [`iris`](https://github.com/kataras/iris): According to Iris' benchmarks, this is the fastest web framework for Go. It's used for exposing a RESTful endpoint consumed by Airbrake. Bear in mind that Iris is a recent framework and somewhat unstable.
 * [`amqp`](https://github.com/streadway/amqp): The standard Go client for AMQP, used for connecting to a RabbitMQ server and sending messages to it.
-* [`go`-commons-pool](https://github.com/jolestar/go-commons-pool): A generic object pool for Go, the connection to RabbitMQ are pooled using this library.
+* [`go-commons-pool`](https://github.com/jolestar/go-commons-pool): A generic object pool for Go, the connection to RabbitMQ are pooled using this library.
 * [`jsonparser`](https://github.com/buger/jsonparser): Alternative JSON parser for Go that does not require schema, it's the fastest parser for decoding a JSON object. Used for decoding the message sent by Airbrake.
 * [`easyjson`](https://github.com/mailru/easyjson): Fast JSON serializer for Go, used for encoding the message sent to a RMQ exchange.
 
